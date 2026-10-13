@@ -12,6 +12,7 @@ Create a kind-config.yaml file:
 
 kind: Cluster
 apiVersion: kind.x-k8s.io/v1alpha4
+
 nodes:
   - role: control-plane
     image: kindest/node:v1.35.1
@@ -19,6 +20,13 @@ nodes:
     image: kindest/node:v1.35.1
   - role: worker
     image: kindest/node:v1.35.1
+  - role: worker
+    image: kindest/node:v1.35.1
+    extraPortMapping:
+    - containerPort: 80
+      hostPort: 80
+      protocol: TCP
+    - containerPort: 443
 ```
 Create the cluster using the configuration file:
 
