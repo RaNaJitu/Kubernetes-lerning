@@ -99,96 +99,154 @@ echo "🎉 Docker, Kind, and kubectl installation complete!"
 
 
 
+# Minikube Installation Guide for Ubuntu
 
-# Minikube Installation on Windows/local System.
-
-This guide provides step-by-step instructions for installing Minikube on windows with pre-requisites. Minikube allows you to run a single-node Kubernetes cluster locally for development and testing purposes.
-
+This guide provides step-by-step instructions for installing Minikube on Ubuntu. Minikube allows you to run a single-node Kubernetes cluster locally for development and testing purposes.
 
 ## Pre-requisites
 
-- Windows os
-- Internet connection
-- Container manager : Docker
-- kubernetes cmd : kubectl
+* Ubuntu OS
+* sudo privileges
+* Internet access
+* Virtualization support enabled (Check with `egrep -c '(vmx|svm)' /proc/cpuinfo`, 0=disabled 1=enabled) 
 
+---
 
-## Step 1: Docker Installation
-visit the below link 
-to download and install the docker desktop.
+## Step 1: Update System Packages
 
-```bash
-  https://docs.docker.com/desktop/install/windows-install/
-```
- ## It will require a RESTART.
-Now open cmd and check installation.
+Update your package lists to make sure you are getting the latest version and dependencies.
 
 ```bash
-  docker --version
-
-
-  output:
-  Docker version 27.0.3, build 7d4bcd8
+sudo apt update
 ```
-successfully installed docker on windows.
 
-## Step 2: Minikube Installation
+<kbd>![image](https://github.com/paragpallavsingh/kubernetes-kickstarter/assets/40052830/57f1c5d9-474a-43b8-90b9-fe542e122f3f)</kbd>
 
-Now open poweshell and run below 2 commands.
+
+## Step 2: Install Required Packages
+
+Install some basic required packages.
+
 ```bash
-New-Item -Path 'c:\' -Name 'minikube' -ItemType Directory -Force
-Invoke-WebRequest -OutFile 'c:\minikube\minikube.exe' -Uri 'https://github.com/kubernetes/minikube/releases/latest/download/minikube-windows-amd64.exe' -UseBasicParsing
-
-```
-```bash
-$oldPath = [Environment]::GetEnvironmentVariable('Path', [EnvironmentVariableTarget]::Machine)
-if ($oldPath.Split(';') -inotcontains 'C:\minikube'){
-  [Environment]::SetEnvironmentVariable('Path', $('{0};C:\minikube' -f $oldPath), [EnvironmentVariableTarget]::Machine)
-}
-```
-check the installation by 
-```bash
-minikube version
-
-
-output:
-minikube version: v1.33.1
-commit: 5883c09216182566a63dff4c326a6fc9ed2982ff
+sudo apt install -y curl wget apt-transport-https
 ```
 
-## Step 3: Run Minikube 
-- Open powershell run below cmd to create brand new cluster.
+<kbd>![image](https://github.com/paragpallavsingh/kubernetes-kickstarter/assets/40052830/84ad8474-8d4d-4d4b-a04d-def88f76dc9a)</kbd>
+
+---
+
+## Step 3: Install Docker
+
+Minikube can run a Kubernetes cluster either in a VM or locally via Docker. This guide demonstrates the Docker method.
+
 ```bash
-minikube start
+sudo apt install -y docker.io
 ```
-## Step 4: Install kubectl With Curl
-- Open powershell run below command to interact with your brand new cluster.
-- Install curl if not availabe bydefault it is present.
+<kbd>![image](https://github.com/paragpallavsingh/kubernetes-kickstarter/assets/40052830/d261f75b-a22f-4510-b3a3-14e1cecaf3e1)</kbd>
+
+
+Start and enable Docker.
+
 ```bash
-curl.exe -LO "https://dl.k8s.io/release/v1.30.0/bin/windows/amd64/kubectl.exe"
+sudo systemctl enable --now docker
 ```
-## Step 5: Play With Your Cluster.
+
+Add current user to docker group (To use docker without root)
+
+```bash
+sudo usermod -aG docker $USER && newgrp docker
+```
+Now, logout (use `exit` command) and connect again.
+
+---
+
+## Step 4: Install Minikube
+
+First, download the Minikube binary using `curl`:
+
+```bash
+curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+```
+
+Make it executable and move it into your path:
+
+```bash
+chmod +x minikube
+sudo mv minikube /usr/local/bin/
+```
+
+<kbd>![image](https://github.com/paragpallavsingh/kubernetes-kickstarter/assets/40052830/80e8a137-286a-4334-886b-ea4821f596b2)</kbd>
+
+---
+
+## Step 5: Install kubectl
+
+Download kubectl, which is a Kubernetes command-line tool.
+
+```bash
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+```
+**Check above image ⬆️**
+Make it executable and move it into your path:
+
+```bash
+chmod +x kubectl
+sudo mv kubectl /usr/local/bin/
+```
+<kbd>![image](https://github.com/paragpallavsingh/kubernetes-kickstarter/assets/40052830/cdda6c84-f6c9-4d05-87e0-ed8627e46a3a)</kbd>
+
+---
+
+## Step 6: Start Minikube
+
+Now, you can start Minikube with the following command:
+
+```bash
+minikube start --driver=docker --vm=true 
+```
+
+This command will start a single-node Kubernetes cluster inside a Docker container.
+
+---
+
+## Step 7: Check Cluster Status
+
+Check the cluster status with:
+
+```bash
+minikube status
+```
+
+<kbd>![image](https://github.com/paragpallavsingh/kubernetes-kickstarter/assets/40052830/a2dabec8-b073-4e1e-a831-dd6845000230)</kbd>
+
+
+You can also use `kubectl` to interact with your cluster:
 
 ```bash
 kubectl get nodes
-
-
-output: 
-NAME       STATUS   ROLES           AGE     VERSION
-minikube   Ready    control-plane   3m54s   v1.30.0
 ```
-This shows your single node cluster in up and running.
 
-## Step 6: Don't Forget to Stop & Delete Minikube.
+---
+
+## Step 8: Stop Minikube
+
 When you are done, you can stop the Minikube cluster with:
+
 ```bash
 minikube stop
 ```
+
+---
+
+## Optional: Delete Minikube Cluster
+
 If you wish to delete the Minikube cluster entirely, you can do so with:
+
 ```bash
 minikube delete
 ```
 
-That's it! You've successfully installed Minikube on Windows, and you can now start deploying Kubernetes applications for development and testing.
+---
 
-    
+That's it! You've successfully installed Minikube on Ubuntu, and you can now start deploying Kubernetes applications for development and testing.
+```
