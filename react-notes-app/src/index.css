@@ -1,0 +1,20 @@
+:root {
+  font-family: 'DM Sans', sans-serif;
+  color: #25263a;
+  background: #f7f8fc;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --ink: #25263a;
+  --muted: #85889c;
+  --purple: #7164d9;
+  --purple-dark: #5e52c5;
+  --line: #e9eaf2;
+}
+* { box-sizing: border-box; }
+html { min-width: 320px; scroll-behavior: smooth; }
+body { margin: 0; min-width: 320px; min-height: 100vh; }
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 3px solid rgba(113,100,217,.24); outline-offset: 2px; }
+::selection { background: #e3dfff; color: #3d348d; }
